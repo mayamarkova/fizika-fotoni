@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фотони и Фотоефект - Работен лист</title>
+    
+    <!-- Tailwind CSS за дизайна -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome за иконите -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- React библиотеки -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const QuizQuestion = ({ question, options, id, selectedAnswer, onAnswer, submitted, correctAnswer }) => {
+          const isCorrect = selectedAnswer === correctAnswer;
+          const showFeedback = submitted;
+
+          return (
+            <div className={`mb-6 p-5 rounded-lg border ${showFeedback ? (isCorrect ? 'border-green-300 bg-green-50' : 'border-red-300 bg-red-50') : 'border-slate-200 bg-white'}`}>
+              <h3 className="text-lg font-medium text-slate-800 mb-3 flex items-start gap-2">
+                <span className="text-blue-500 mt-1"><i className="fa-solid fa-circle-question"></i></span>
+                {question}
+              </h3>
+              <div className="space-y-2 ml-7">
+                {options.map((option, index) => (
+                  <label 
+                    key={index} 
+                    className={`flex items-center p-3 rounded-md cursor-pointer transition-colors ${
+                      selectedAnswer === option.value 
+                        ? 'bg-blue-100 border-blue-400' 
+                        : 'hover:bg-slate-100 border-transparent'
+                    } border`}
+                  >
+                    <input
+                      type="radio"
+                      name={id}
+                      value={option.value}
+                      checked={selectedAnswer === option.value}
+                      onChange={() => onAnswer(id, option.value)}
+                      disabled={submitted}
+                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="ml-3 text-slate-700">{option.label}</span>
+                    {showFeedback && selectedAnswer === option.value && (
+                      <span className="ml-auto">
+                        {isCorrect ? <i className="fa-solid fa-circle-check text-green-500 text-xl"></i> : <i className="fa-solid fa-circle-xmark text-red-500 text-xl"></i>}
+                      </span>
+                    )}
+                    {showFeedback && !isCorrect && option.value === correctAnswer && selectedAnswer && (
+                      <span className="ml-auto text-sm text-green-600 font-medium flex items-center gap-1">
+                        <i className="fa-solid fa-circle-check"></i> Правилен отговор
+                      </span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
+          );
+        };
+
+        function App() {
+          const [answers, setAnswers] = useState({});
+          const [submitted, setSubmitted] = useState(false);
+          const [score, setScore] = useState(0);
+
+          const questions = [
+            {
+              id: "q1",
+              question: "Каква е масата в покой на фотона?",
+              options: [
+                { value: "a", label: "Много малка, но различна от нула" },
+                { value: "b", label: "Точно нула" },
+                { value: "c", label: "Равна на масата на електрона" },
+                { value: "d", label: "Зависи от честотата на светлината" }
+              ],
+              correctAnswer: "b"
+            },
+            {
+              id: "q2",
+              question: "Кой учен обяснява теоретично фотоелектричния ефект чрез концепцията за фотоните?",
+              options: [
+                { value: "a", label: "Хайнрих Херц" },
+                { value: "b", label: "Макс Планк" },
+                { value: "c", label: "Алберт Айнщайн" },
+                { value: "d", label: "Исак Нютон" }
+              ],
+              correctAnswer: "c"
+            },
+            {
+              id: "q3",
+              question: "Какво гласи уравнението на Айнщайн за фотоефекта?",
+              options: [
+                { value: "a", label: "Енергията на фотона е равна на масата по скоростта на светлината на квадрат (E = mc²)" },
+                { value: "b", label: "Енергията на фотона се изразходва за отделителна работа и кинетична енергия на електрона" },
+                { value: "c", label: "Броят на отделените електрони зависи само от честотата" },
+                { value: "d", label: "Скоростта на електроните не зависи от нищо" }
+              ],
+              correctAnswer: "b"
+            },
+            {
+              id: "q4",
+              question: "Ако увеличим честотата на падащата светлина (при същия интензитет), какво ще се случи?",
+              options: [
+                { value: "a", label: "Ще се отделят повече електрони" },
+                { value: "b", label: "Ще се увеличи максималната кинетична енергия на отделените електрони" },
+                { value: "c", label: "Ще се намали отделителната работа на метала" },
+                { value: "d", label: "Няма да има промяна" }
+              ],
+              correctAnswer: "b"
+            },
+            {
+              id: "q5",
+              question: "Какво представлява 'червената граница' на фотоефекта?",
+              options: [
+                { value: "a", label: "Минималната честота на светлината, при която може да се наблюдава фотоефект" },
+                { value: "b", label: "Максималният брой електрони, които могат да бъдат отделени" },
+                { value: "c", label: "Цветът на светлината, който е най-опасен за очите" },
+                { value: "d", label: "Дължината на вълната на червената светлина" }
+              ],
+              correctAnswer: "a"
+            }
+          ];
+
+          const handleAnswer = (questionId, value) => {
+            setAnswers(prev => ({ ...prev, [questionId]: value }));
+          };
+
+          const handleSubmit = () => {
+            let currentScore = 0;
+            questions.forEach(q => {
+              if (answers[q.id] === q.correctAnswer) {
+                currentScore += 1;
+              }
+            });
+            setScore(currentScore);
+            setSubmitted(true);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          };
+
+          const handleReset = () => {
+            setAnswers({});
+            setSubmitted(false);
+            setScore(0);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          };
+
+          const allAnswered = questions.every(q => answers[q.id]);
+
+          return (
+            <div className="min-h-screen bg-slate-100 py-8 px-4 font-sans text-slate-800">
+              <div className="max-w-4xl mx-auto space-y-8">
+                
+                {/* Header */}
+                <header className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-lg text-center">
+                  <h1 className="text-3xl md:text-4xl font-bold mb-4 flex items-center justify-center gap-3">
+                    <i className="fa-solid fa-lightbulb text-yellow-300 text-4xl"></i>
+                    Фотони и Фотоелектричен ефект
+                  </h1>
+                  <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+                    Интерактивен работен лист за усвояване и проверка на знанията за природата на светлината и квантовите явления.
+                  </p>
+                </header>
+
+                {/* Audio Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-solid fa-headphones text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Аудио Урок</h2>
+                  </div>
+                  <p className="text-slate-600 mb-4">Изслушайте аудиозаписа към урока. Можете да го слушате, докато разглеждате презентацията по-долу.</p>
+                  <div className="w-full h-40 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative shadow-inner">
+                     <iframe 
+                        src="https://drive.google.com/file/d/1P3nfZsym1abneAs0UrKEItU5nxrrDigX/preview" 
+                        className="w-full h-full z-10 absolute top-0 left-0" 
+                        title="Аудио Урок">
+                     </iframe>
+                     <div className="absolute inset-0 flex flex-col items-center justify-center z-0 text-slate-400">
+                        <i className="fa-solid fa-headphones text-4xl mb-2 opacity-30 animate-pulse"></i>
+                        <span className="text-sm text-center px-4">Зареждане на аудиото от Google Drive...</span>
+                     </div>
+                  </div>
+                </section>
+
+                {/* Video Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-solid fa-video text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Видео Урок</h2>
+                  </div>
+                  <p className="text-slate-600 mb-4">Изгледайте видеото, за да разберете нагледно процесите и явленията.</p>
+                  <div className="aspect-video w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative shadow-inner">
+                     <iframe 
+                        src="https://drive.google.com/file/d/1-2HZzSOb-DWjk0pDFmuULfreZ4NJffku/preview" 
+                        className="w-full h-full z-10 absolute top-0 left-0" 
+                        title="Видео Урок" 
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen>
+                     </iframe>
+                     <div className="absolute inset-0 flex flex-col items-center justify-center z-0 text-slate-400">
+                        <i className="fa-solid fa-video text-5xl mb-2 opacity-30 animate-pulse"></i>
+                        <span className="text-sm text-center px-4">Зареждане на видеото от Google Drive...</span>
+                     </div>
+                  </div>
+                  
+                  {/* Бутон за отваряне в нов прозорец (резервен вариант) */}
+                  <div className="mt-4 flex justify-end">
+                    <a 
+                      href="https://drive.google.com/file/d/1-2HZzSOb-DWjk0pDFmuULfreZ4NJffku/view?usp=sharing" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors border border-blue-200"
+                    >
+                      <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                      Ако видеото не тръгва, отворете го в нов прозорец
+                    </a>
+                  </div>
+                </section>
+
+                {/* Presentation Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-solid fa-desktop text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Презентация</h2>
+                  </div>
+                  <p className="text-slate-600 mb-4">Прегледайте слайдовете от презентацията към урока.</p>
+                  <div className="aspect-video w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative shadow-inner">
+                     <iframe 
+                        src="https://drive.google.com/file/d/1qrHfFHwkYZp6Lu1lSPOdxA45ZHTEFem-/preview" 
+                        className="w-full h-full z-10 absolute top-0 left-0" 
+                        title="Презентация" 
+                        allowFullScreen>
+                     </iframe>
+                     <div className="absolute inset-0 flex flex-col items-center justify-center z-0 text-slate-400">
+                        <i className="fa-solid fa-desktop text-5xl mb-2 opacity-30 animate-pulse"></i>
+                        <span className="text-sm text-center px-4">Зареждане на презентацията от Google Drive...</span>
+                     </div>
+                  </div>
+                </section>
+
+                {/* Theory Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-solid fa-book-open text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Кратка Теория</h2>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="bg-blue-50 p-5 rounded-xl">
+                      <h3 className="text-xl font-bold text-blue-800 mb-3 flex items-center gap-2">
+                        <i className="fa-solid fa-bolt text-xl"></i> Какво е Фотон?
+                      </h3>
+                      <p className="mb-3 text-slate-700">
+                        Светлината има <strong>двойнствен характер</strong> – тя се проявява и като вълна, и като поток от частици. Тези "частици" на светлината се наричат <strong>фотони</strong> (или кванти).
+                      </p>
+                      <ul className="list-disc pl-5 space-y-2 text-slate-700">
+                        <li><strong>Енергия:</strong> E = h·ν (където <i>h</i> е константата на Планк, а <i>ν</i> е честотата на светлината).</li>
+                        <li><strong>Маса в покой:</strong> Фотонът няма маса в покой (m = 0). Той съществува само в движение.</li>
+                        <li><strong>Скорост:</strong> Движи се винаги със скоростта на светлината във вакуум (<i>c</i> ≈ 300,000 км/с).</li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-indigo-50 p-5 rounded-xl">
+                      <h3 className="text-xl font-bold text-indigo-800 mb-3 flex items-center gap-2">
+                        <i className="fa-solid fa-lightbulb text-xl"></i> Фотоелектричен ефект
+                      </h3>
+                      <p className="mb-3 text-slate-700">
+                        Явлението, при което светлината изтръгва електрони от повърхността на метали, се нарича <strong>фотоефект</strong>. Открито е от Херц и обяснено от Айнщайн през 1905 г.
+                      </p>
+                      <div className="bg-white p-3 rounded-lg border border-indigo-100 my-3 text-center shadow-sm">
+                        <span className="font-mono text-lg font-bold text-indigo-700">h·ν = A + E<sub>k,max</sub></span>
+                        <p className="text-xs text-slate-500 mt-1">Уравнение на Айнщайн за фотоефекта</p>
+                      </div>
+                      <ul className="list-disc pl-5 space-y-2 text-slate-700 text-sm">
+                        <li><strong>A</strong> - Отделителна работа (минималната енергия за изтръгване на електрон).</li>
+                        <li><strong>E<sub>k,max</sub></strong> - Максимална кинетична енергия на излетелия електрон.</li>
+                        <li><strong>Червена граница:</strong> Минималната честота, под която фотоефект не се наблюдава, независимо от силата на светлината.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Tasks Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-solid fa-calculator text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Задачи за упражнение</h2>
+                  </div>
+                  <p className="text-slate-600 mb-6">
+                    Опитайте се да решите следните задачи самостоятелно. Ако изпитате затруднения, използвайте бутона за напътствия под всяка задача.
+                  </p>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                      <h3 className="font-bold text-slate-800 mb-2">Задача 1: Енергия на фотона</h3>
+                      <p className="text-slate-700 mb-4">Пресметнете енергията на фотон на синята светлина, която има честота <span className="font-mono font-semibold">ν = 6,5·10¹⁴ Hz</span>. <br/><span className="text-sm text-slate-500">(Константа на Планк: h = 6,63·10⁻³⁴ J·s)</span></p>
+                      <details className="group">
+                        <summary className="flex items-center gap-2 cursor-pointer text-blue-600 font-medium hover:text-blue-800 transition-colors select-none">
+                          <i className="fa-solid fa-circle-info text-lg"></i> Покажи напътствия за решението
+                        </summary>
+                        <div className="mt-3 p-4 bg-blue-50/50 rounded-lg text-sm text-slate-700 border border-blue-100">
+                          <p className="mb-2"><strong>1. Коя формула да използвам?</strong></p>
+                          <p className="mb-3">Търсим енергия на фотон по дадена честота. Използвайте формулата на Планк: <br/><span className="font-mono font-bold bg-white border border-blue-200 px-2 py-1 rounded inline-block mt-1">E = h · ν</span></p>
+                          <p className="mb-2"><strong>2. Как да пресметна?</strong></p>
+                          <ul className="list-disc pl-5 space-y-1">
+                            <li>Заместете стойностите във формулата: <strong>E = (6,63·10⁻³⁴) · (6,5·10¹⁴)</strong></li>
+                            <li>Умножете първо числовите стойности: <span className="font-mono">6,63 · 6,5 = 43,095</span></li>
+                            <li>Умножете степените (при умножение показателите се събират): <span className="font-mono">10⁻³⁴ · 10¹⁴ = 10⁻²⁰</span></li>
+                            <li>Крайният резултат е в Джаули (J). Записан в стандартен вид е <span className="font-mono">4,3 · 10⁻¹⁹ J</span>.</li>
+                          </ul>
+                        </div>
+                      </details>
+                    </div>
+
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                      <h3 className="font-bold text-slate-800 mb-2">Задача 2: Уравнение на Айнщайн за фотоефекта</h3>
+                      <p className="text-slate-700 mb-4">Светлина с енергия на фотоните <span className="font-mono font-semibold">E = 4,0 eV</span> (електронволта) пада върху метална повърхност. Отделителната работа за този метал е <span className="font-mono font-semibold">A = 2,2 eV</span>. Намерете максималната кинетична енергия на отделените електрони.</p>
+                      <details className="group">
+                        <summary className="flex items-center gap-2 cursor-pointer text-blue-600 font-medium hover:text-blue-800 transition-colors select-none">
+                          <i className="fa-solid fa-circle-info text-lg"></i> Покажи напътствия за решението
+                        </summary>
+                        <div className="mt-3 p-4 bg-blue-50/50 rounded-lg text-sm text-slate-700 border border-blue-100">
+                          <p className="mb-2"><strong>1. Кое правило или закон да използвам?</strong></p>
+                          <p className="mb-3">Използвайте Уравнението на Айнщайн за фотоефекта. То гласи, че енергията на фотона отива за изтръгване на електрона (отделителна работа) и за остатъчна кинетична енергия: <br/><span className="font-mono font-bold bg-white border border-blue-200 px-2 py-1 rounded inline-block mt-1">E = A + E<sub className="text-[10px]">k,max</sub></span></p>
+                          <p className="mb-2"><strong>2. Как да намеря търсеното?</strong></p>
+                          <ul className="list-disc pl-5 space-y-1">
+                            <li>Трябва да изразите кинетичната енергия от горната формула: <span className="font-mono font-bold">E<sub className="text-[10px]">k,max</sub> = E - A</span></li>
+                            <li>Тъй като и двете стойности са дадени в еднакви мерни единици (eV), можете директно да ги извадите: <span className="font-mono">4,0 eV - 2,2 eV</span>.</li>
+                            <li>Резултатът ще бъде <span className="font-mono">1,8 eV</span>.</li>
+                          </ul>
+                        </div>
+                      </details>
+                    </div>
+
+                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                      <h3 className="font-bold text-slate-800 mb-2">Задача 3: Разбиране на "червената граница"</h3>
+                      <p className="text-slate-700 mb-4">Ще се наблюдава ли фотоефект, ако облъчим метала от Задача 2 с фотони, чиято енергия е <span className="font-mono font-semibold">E = 1,8 eV</span>? Обосновете отговора си.</p>
+                      <details className="group">
+                        <summary className="flex items-center gap-2 cursor-pointer text-blue-600 font-medium hover:text-blue-800 transition-colors select-none">
+                          <i className="fa-solid fa-circle-info text-lg"></i> Покажи напътствия за решението
+                        </summary>
+                        <div className="mt-3 p-4 bg-blue-50/50 rounded-lg text-sm text-slate-700 border border-blue-100">
+                          <p className="mb-2"><strong>1. Какво трябва да си припомним?</strong></p>
+                          <p className="mb-3">Спомнете си какво означава "отделителна работа" (A) и "червена граница". За да има фотоефект, енергията на един падащ фотон (<span className="font-mono">E</span>) трябва да бъде <strong>по-голяма или равна</strong> на отделителната работа (<span className="font-mono">A</span>) за дадения метал.</p>
+                          <p className="mb-2"><strong>2. Как да сравним?</strong></p>
+                          <ul className="list-disc pl-5 space-y-1">
+                            <li>Вижте колко е отделителната работа <span className="font-mono">A</span> за метала от Задача 2: тя е <span className="font-mono">2,2 eV</span>.</li>
+                            <li>Сравнете я с енергията на новите фотони, която е <span className="font-mono">1,8 eV</span>.</li>
+                            <li>Понеже <span className="font-mono">1,8 eV &lt; 2,2 eV</span> (енергията на фотона не достига дори за откъсването на електрона от повърхността), фотоефект <strong>няма да се наблюдава</strong>.</li>
+                          </ul>
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Practice/Quiz Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-regular fa-circle-question text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Проверка на знанията</h2>
+                  </div>
+                  
+                  <p className="text-slate-600 mb-6">
+                    Отговорете на следните въпроси, като изберете най-точния отговор, въз основа на прочетеното по-горе.
+                  </p>
+
+                  <div className="space-y-2">
+                    {questions.map((q) => (
+                      <QuizQuestion
+                        key={q.id}
+                        id={q.id}
+                        question={q.question}
+                        options={q.options}
+                        correctAnswer={q.correctAnswer}
+                        selectedAnswer={answers[q.id]}
+                        onAnswer={handleAnswer}
+                        submitted={submitted}
+                      />
+                    ))}
+                  </div>
+
+                  {!submitted ? (
+                    <div className="mt-8 flex flex-col items-center">
+                      {!allAnswered && (
+                        <p className="text-amber-600 text-sm mb-3">Моля, отговорете на всички въпроси, за да проверите резултата си.</p>
+                      )}
+                      <button
+                        onClick={handleSubmit}
+                        disabled={!allAnswered}
+                        className={`px-8 py-3 rounded-xl font-bold text-white transition-all transform ${
+                          allAnswered 
+                            ? 'bg-blue-600 hover:bg-blue-700 hover:scale-105 shadow-md hover:shadow-lg cursor-pointer' 
+                            : 'bg-slate-300 cursor-not-allowed'
+                        }`}
+                      >
+                        Провери отговорите
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-200 text-center animate-fade-in">
+                      <h3 className="text-2xl font-bold text-slate-800 mb-2">Вашият резултат:</h3>
+                      <div className="text-5xl font-black mb-4 flex justify-center items-center gap-2">
+                        <span className={score === questions.length ? "text-green-500" : score >= questions.length / 2 ? "text-yellow-500" : "text-red-500"}>
+                          {score}
+                        </span>
+                        <span className="text-slate-400 text-3xl">/ {questions.length}</span>
+                      </div>
+                      
+                      <p className="text-lg text-slate-600 mb-6">
+                        {score === questions.length 
+                          ? "Отлично! Вие сте усвоили перфектно материала за фотоните и фотоефекта." 
+                          : score >= questions.length / 2 
+                            ? "Добро справяне! Имате добри познания, но прегледайте отново грешките си." 
+                            : "Опитайте отново. Препоръчваме ви да прочетете теоретичната част по-внимателно."}
+                      </p>
+
+                      <button
+                        onClick={handleReset}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-50 hover:border-blue-400 hover:text-blue-600 transition-colors"
+                      >
+                        <i className="fa-solid fa-rotate-left"></i> Опитай отново
+                      </button>
+                    </div>
+                  )}
+                </section>
+
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
