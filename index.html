@@ -172,6 +172,26 @@
                   </p>
                 </header>
 
+                {/* Image Section */}
+                <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
+                    <i className="fa-solid fa-image text-blue-600 text-3xl"></i>
+                    <h2 className="text-2xl font-semibold text-slate-800">Илюстрация към урока</h2>
+                  </div>
+                  <div className="w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden bg-slate-100 relative shadow-inner border border-slate-200">
+                     <iframe 
+                        src="https://drive.google.com/file/d/1ioPLMoekdGo8o7VECuAov1xoyeolETlB/preview" 
+                        className="w-full h-full z-10 absolute top-0 left-0 border-0" 
+                        title="Илюстрация към урока"
+                        allowFullScreen>
+                     </iframe>
+                     <div className="absolute inset-0 flex flex-col items-center justify-center z-0 text-slate-400">
+                        <i className="fa-solid fa-image text-5xl mb-2 opacity-30 animate-pulse"></i>
+                        <span className="text-sm text-center px-4">Зареждане на изображението от Google Drive...</span>
+                     </div>
+                  </div>
+                </section>
+
                 {/* Audio Section */}
                 <section className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
                   <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-6">
